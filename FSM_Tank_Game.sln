@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2017
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FSM_Tank_Game", "FSM_Tank_Game.csproj", "{FFA3AB4D-94FF-4585-A959-CF1DC51202B4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FSM_Tank_Game.Plugins", "FSM_Tank_Game.Plugins.csproj", "{B67570D7-2339-C238-02B2-5FEDF238FE9E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FSM_Tank_Game.Editor", "FSM_Tank_Game.Editor.csproj", "{967DCF29-40F8-A291-EDFE-92420162F84E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FFA3AB4D-94FF-4585-A959-CF1DC51202B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFA3AB4D-94FF-4585-A959-CF1DC51202B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFA3AB4D-94FF-4585-A959-CF1DC51202B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFA3AB4D-94FF-4585-A959-CF1DC51202B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B67570D7-2339-C238-02B2-5FEDF238FE9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B67570D7-2339-C238-02B2-5FEDF238FE9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B67570D7-2339-C238-02B2-5FEDF238FE9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B67570D7-2339-C238-02B2-5FEDF238FE9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{967DCF29-40F8-A291-EDFE-92420162F84E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{967DCF29-40F8-A291-EDFE-92420162F84E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{967DCF29-40F8-A291-EDFE-92420162F84E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{967DCF29-40F8-A291-EDFE-92420162F84E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
