@@ -31,7 +31,13 @@ public class SimpleFSM : FSM
     private int health;
 
     //Distance array for the enemy tanks
-    private float[] Edistance;
+    //private float[] Edistance;
+
+    //Transform array for the enemy tanks
+    public Transform[] enemiesTransform;
+
+    private bool right;
+    private bool left;
 
 
     //Initialize the Finite state machine for the NPC tank
@@ -61,46 +67,102 @@ public class SimpleFSM : FSM
         //Get the turret of the tank
         turret = gameObject.transform.GetChild(0).transform;
         bulletSpawnPoint = turret.GetChild(0).transform;
-
-        //Get the list of enemies and their transforms
-        GameObject[] objEnemy = GameObject.FindGameObjectsWithTag("Enemy");
-        if(objEnemy != null)
-        {
-            for (int i = 0; i < objEnemy.Length -1 ; i++)
-            {
-                enemiesTransform[i] = objEnemy[i].transform;
-            }
-        }
-
-        if (!enemiesTransform[0])
-            print("Enemy 0 doesn't exist.. Please add one with Tag named 'Enemy'");
     }
 
     //Update each frame
     protected override void FSMUpdate()
     {
-        switch (curState)
-        {
-            case FSMState.Patrol: UpdatePatrolState(); break;
-            case FSMState.Chase: UpdateChaseState(); break;
-            case FSMState.Evade: UpdateEvadeState(); break;
-            case FSMState.Attack: UpdateAttackState(); break;
-            case FSMState.Flee: UpdateFleeState(); break;
-            case FSMState.Dead: UpdateDeadState(); break;
-        }
+        GameObject[] Bots = GameObject.FindGameObjectsWithTag("Enemy");
 
-        //Update the time
-        elapsedTime += Time.deltaTime;
+        Vector3 forward = transform.TransformDirection(Vector3.forward) * 100;
+        Vector3 forwardright = transform.TransformDirection(Vector3.forward + new Vector3(1, 0, 0)) * 100;
+        Vector3 forwardleft = transform.TransformDirection(Vector3.forward + new Vector3(-1, 0, 0)) * 100;
 
-        //Go to dead state is no health left
-        if (health <= 0)
-            curState = FSMState.Dead;
-    }
+        //foreach (GameObject bot in Bots)
+        //{
+            //float distance = Vector3.Distance(bot.transform.position, transform.position);
 
-    /// <summary>
-    /// Patrol state
-    /// </summary>
-    protected void UpdatePatrolState()
+            //if (distance < 50.0f && distance > 0f)
+            //{
+                
+                //Debug.DrawRay(transform.position, forward, Color.green);
+
+                if (Physics.Raycast(transform.position, forward, 100))
+                {
+                    Debug.LogWarning("Green Ray hit.");
+                    left = true;
+                    curState = FSMState.Evade;
+                }
+
+                
+                //Debug.DrawRay(transform.position, forwardright, Color.green);
+                if (Physics.Raycast(transform.position, forwardright, 100))
+                {
+                    Debug.LogWarning("Blue Ray hit.");
+                    left = true;
+                    curState = FSMState.Evade;
+
+                }
+
+                
+                //Debug.DrawRay(transform.position, forwardleft, Color.green);
+                if (Physics.Raycast(transform.position, forwardright, 100))
+                {
+                    Debug.LogWarning("Red Ray hit.");
+                    left = false;
+                    curState = FSMState.Evade;
+
+                }
+                    //}
+                //}
+
+
+                switch (curState)
+                {
+                    case FSMState.Patrol: UpdatePatrolState(); break;
+                    case FSMState.Chase: UpdateChaseState(); break;
+                    case FSMState.Evade: UpdateEvadeState(); break;
+                    case FSMState.Attack: UpdateAttackState(); break;
+                    case FSMState.Flee: UpdateFleeState(); break;
+                    case FSMState.Dead: UpdateDeadState(); break;
+                }
+
+                //Vector3 forward = transform.TransformDirection(Vector3.forward) * 100;
+                //Debug.DrawRay(transform.position, forward, Color.green);
+
+                Debug.DrawRay(transform.position, forward, Color.green);
+
+                //Vector3 forwardright = transform.TransformDirection(Vector3.forward + new Vector3(1, 0, 0)) * 100;
+                Debug.DrawRay(transform.position, forwardright, Color.blue);
+
+                //Vector3 forwardleft = transform.TransformDirection(Vector3.forward + new Vector3(-1, 0, 0)) * 100;
+                Debug.DrawRay(transform.position, forwardleft, Color.red);
+
+                //Update the time
+                elapsedTime += Time.deltaTime;
+
+                //Go to dead state is no health left
+                if (health <= 0)
+                    curState = FSMState.Dead;
+
+                /*for (int i = 0; i < enemiesTransform.Length; i++)
+                {
+
+
+                    Edistance[i] = Vector3.Distance(transform.position, enemiesTransform[i].position);
+                    if (Edistance[i] <= 100.0f &&  Edistance[i] > 0f)
+                    {
+                        //Go Backwards
+                        //transform.Translate(Vector3.back * Time.deltaTime * curSpeed);
+                        curState = FSMState.Evade;
+                    }
+                }*/
+            }
+
+            /// <summary>
+            /// Patrol state
+            /// </summary>
+            protected void UpdatePatrolState()
     {
         float dist = Vector3.Distance(transform.position, playerTransform.position);
         //Find another random patrol point if the current point is reached
@@ -118,7 +180,7 @@ public class SimpleFSM : FSM
         } else if (dist <= 50.0f && health <= 50)
         {
             curState = FSMState.Flee;
-        }
+        } 
 
         //Rotate to the target point
         Quaternion targetRotation = Quaternion.LookRotation(destPos - transform.position);
@@ -161,20 +223,66 @@ public class SimpleFSM : FSM
     /// </summary>
     protected void UpdateEvadeState()
     {
+
+        if (left)
+        {
+            Debug.LogError("LEFT");
+            Quaternion targetRotation = Quaternion.LookRotation(new Vector3(-45, 0, 0) - transform.position);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * curRotSpeed);
+            left = false;
+
+        } else if (right)
+        {
+            Debug.LogError("RIGHT");
+            Quaternion targetRotation = Quaternion.LookRotation(new Vector3(45, 0, 0) - transform.position);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * curRotSpeed);
+            right = false;
+        }
         //Set the target position as the player position
-        destPos = playerTransform.position;
+        //destPos = playerTransform.position;
+
+        Vector3 forward = transform.TransformDirection(Vector3.forward) * 100;
+        //Debug.DrawRay(transform.position, forward, Color.green);
+
+        /*if (Physics.Raycast(transform.position, forward, 10))
+        {
+            Debug.LogWarning("Green Ray hit.");
+            Quaternion targetRotation = Quaternion.LookRotation((destPos - new Vector3(0,-45,0)) - transform.position);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * curRotSpeed);
+        }
+
+        Vector3 forwardright = transform.TransformDirection(Vector3.forward + new Vector3(1,0,0)) * 100;
+        //Debug.DrawRay(transform.position, forwardright, Color.green);
+        if (Physics.Raycast(transform.position, forwardright, 10))
+        {
+            Debug.LogWarning("Blue Ray hit.");
+            Quaternion targetRotation = Quaternion.LookRotation((destPos - new Vector3(0, -45, 0)) - transform.position);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * curRotSpeed);
+        }
+
+        Vector3 forwardleft = transform.TransformDirection(Vector3.forward + new Vector3(-1, 0, 0)) * 100;
+        //Debug.DrawRay(transform.position, forwardleft, Color.green);
+        if (Physics.Raycast(transform.position, forwardright, 10))
+        {
+            Debug.LogWarning("Red Ray hit.");
+            Quaternion targetRotation = Quaternion.LookRotation((destPos - new Vector3(0, 45, 0)) - transform.position);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * curRotSpeed);
+        }*/
 
         //Check distance with other tanks, when none near enough do nothing, if one within a short range; evade
-        for (int i = 0; i < enemiesTransform.Length; i++)
+        /*for (int i = 0; i < enemiesTransform.Length; i++)
         {
+            
+
             Edistance[i] = Vector3.Distance(transform.position, enemiesTransform[i].position);
-            if (Edistance[i] <= 100.0f)
+            if (Edistance[i] <= 100.0f && >= 0f)
             {
                 //Go Backwards
-                transform.Translate(Vector3.back * Time.deltaTime * curSpeed);
+                //transform.Translate(Vector3.back * Time.deltaTime * curSpeed);
+                
             }
-        }
-        
+        }*/
+
 
         //Check the distance with player tank
         //When the distance is near, transition to attack state

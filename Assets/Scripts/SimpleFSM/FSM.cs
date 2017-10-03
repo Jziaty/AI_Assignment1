@@ -6,8 +6,8 @@ public class FSM : MonoBehaviour
     //Player Transform
     protected Transform playerTransform;
 
-    //Enemy Transform
-    protected Transform[] enemiesTransform;
+    //Enemy Transforms
+    //protected Transform[] enemiesTransform;
 
     //Next destination position of the NPC Tank
     protected Vector3 destPos;
