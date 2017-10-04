@@ -36,9 +36,12 @@ public class SimpleFSM : FSM
     //Transform array for the enemy tanks
     public Transform[] enemiesTransform;
 
-    private bool right;
-    private bool left;
+    public bool turnRight;
+    public bool turnLeft;
 
+    private float force = 50f;
+
+    private Vector3 targetPoint;
 
     //Initialize the Finite state machine for the NPC tank
 	protected override void Initialize () 
@@ -72,74 +75,118 @@ public class SimpleFSM : FSM
     //Update each frame
     protected override void FSMUpdate()
     {
+        switch (curState)
+        {
+            case FSMState.Patrol: UpdatePatrolState(); break;
+            case FSMState.Chase: UpdateChaseState(); break;
+            case FSMState.Evade: UpdateEvadeState(); break;
+            case FSMState.Attack: UpdateAttackState(); break;
+            case FSMState.Flee: UpdateFleeState(); break;
+            case FSMState.Dead: UpdateDeadState(); break;
+        }
+
+
         GameObject[] Bots = GameObject.FindGameObjectsWithTag("Enemy");
 
         Vector3 forward = transform.TransformDirection(Vector3.forward) * 100;
         Vector3 forwardright = transform.TransformDirection(Vector3.forward + new Vector3(1, 0, 0)) * 100;
         Vector3 forwardleft = transform.TransformDirection(Vector3.forward + new Vector3(-1, 0, 0)) * 100;
 
+
+        Debug.DrawRay(transform.position, forward, Color.green);
+        Debug.DrawRay(transform.position, forwardright, Color.blue);
+        Debug.DrawRay(transform.position, forwardleft, Color.red);
         //foreach (GameObject bot in Bots)
         //{
-            //float distance = Vector3.Distance(bot.transform.position, transform.position);
+        //float distance = Vector3.Distance(bot.transform.position, transform.position);
 
-            //if (distance < 50.0f && distance > 0f)
-            //{
+        //if (distance < 50.0f && distance > 0f)
+        //{
+
+        //Debug.DrawRay(transform.position, forward, Color.green);
+        RaycastHit hit;
+        RaycastHit hit2;
+        RaycastHit hit3;
+
+        if (Physics.Raycast(transform.position, forward, out hit, 200))
+        {
+            if (hit.distance <= 500)
+            {
                 
-                //Debug.DrawRay(transform.position, forward, Color.green);
-
-                if (Physics.Raycast(transform.position, forward, 100))
-                {
-                    Debug.LogWarning("Green Ray hit.");
-                    left = true;
-                    curState = FSMState.Evade;
-                }
-
+                Vector3 hitNormal = hit.normal;
+                //No movement in y space (up or down)
+                hitNormal.y = 0.0f;
+                //Get the new directional vector by adding force to agent's current forward vector
+                targetPoint = transform.forward + hitNormal * force;
                 
-                //Debug.DrawRay(transform.position, forwardright, Color.green);
-                if (Physics.Raycast(transform.position, forwardright, 100))
-                {
-                    Debug.LogWarning("Blue Ray hit.");
-                    left = true;
-                    curState = FSMState.Evade;
 
-                }
+            }
+        }
 
-                
-                //Debug.DrawRay(transform.position, forwardleft, Color.green);
-                if (Physics.Raycast(transform.position, forwardright, 100))
-                {
-                    Debug.LogWarning("Red Ray hit.");
-                    left = false;
-                    curState = FSMState.Evade;
+        if (Physics.Raycast(transform.position, forwardright, out hit, 200))
+        {
+            if (hit.distance <= 500)
+            {
 
-                }
-                    //}
-                //}
+                Vector3 hitNormal = hit.normal;
+                //No movement in y space (up or down)
+                hitNormal.y = 0.0f;
+                //Get the new directional vector by adding force to agent's current forward vector
+                targetPoint = transform.forward + hitNormal * force;
 
 
-                switch (curState)
-                {
-                    case FSMState.Patrol: UpdatePatrolState(); break;
-                    case FSMState.Chase: UpdateChaseState(); break;
-                    case FSMState.Evade: UpdateEvadeState(); break;
-                    case FSMState.Attack: UpdateAttackState(); break;
-                    case FSMState.Flee: UpdateFleeState(); break;
-                    case FSMState.Dead: UpdateDeadState(); break;
-                }
+            }
+        }
 
-                //Vector3 forward = transform.TransformDirection(Vector3.forward) * 100;
-                //Debug.DrawRay(transform.position, forward, Color.green);
+        if (Physics.Raycast(transform.position, forwardleft, out hit, 200))
+        {
+            if (hit.distance <= 500)
+            {
 
-                Debug.DrawRay(transform.position, forward, Color.green);
+                Vector3 hitNormal = hit.normal;
+                //No movement in y space (up or down)
+                hitNormal.y = 0.0f;
+                //Get the new directional vector by adding force to agent's current forward vector
+                targetPoint = transform.forward + hitNormal * force;
 
-                //Vector3 forwardright = transform.TransformDirection(Vector3.forward + new Vector3(1, 0, 0)) * 100;
-                Debug.DrawRay(transform.position, forwardright, Color.blue);
 
-                //Vector3 forwardleft = transform.TransformDirection(Vector3.forward + new Vector3(-1, 0, 0)) * 100;
-                Debug.DrawRay(transform.position, forwardleft, Color.red);
+            }
+        }
 
-                //Update the time
-                elapsedTime += Time.deltaTime;
+
+        /*       //Debug.DrawRay(transform.position, forwardright, Color.green);
+       if (Physics.Raycast(transform.position, forwardright, out hit2, 200))
+       {
+                   //Debug.LogWarning("Blue Ray hit.");
+            if (hit2.distance <= 500)
+            {
+                turnLeft = true;
+                curState = FSMState.Evade;
+            }
+        }
+
+
+               //Debug.DrawRay(transform.position, forwardleft, Color.green);
+        if (Physics.Raycast(transform.position, forwardright, out hit3, 200))
+        {
+            if (hit3.distance <= 500)
+            {
+                turnRight = true;
+                curState = FSMState.Evade;
+            }
+
+       }*/
+
+
+
+
+        //Vector3 forward = transform.TransformDirection(Vector3.forward) * 100;
+        //Debug.DrawRay(transform.position, forward, Color.green);
+
+
+
+        //Update the time
+        elapsedTime += Time.deltaTime;
 
                 //Go to dead state is no health left
                 if (health <= 0)
@@ -224,51 +271,24 @@ public class SimpleFSM : FSM
     protected void UpdateEvadeState()
     {
 
-        if (left)
-        {
-            Debug.LogError("LEFT");
-            Quaternion targetRotation = Quaternion.LookRotation(new Vector3(-45, 0, 0) - transform.position);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * curRotSpeed);
-            left = false;
 
-        } else if (right)
+        if (turnLeft)
         {
-            Debug.LogError("RIGHT");
-            Quaternion targetRotation = Quaternion.LookRotation(new Vector3(45, 0, 0) - transform.position);
+            /*Debug.LogError("LEFT");
+            Quaternion targetRotation = Quaternion.LookRotation(new Vector3(-60, 0, 0) + transform.position);*/
+            Quaternion targetRotation = Quaternion.Euler(-60, 0, 0);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * curRotSpeed);
-            right = false;
+            turnLeft = false;
         }
-        //Set the target position as the player position
-        //destPos = playerTransform.position;
-
-        Vector3 forward = transform.TransformDirection(Vector3.forward) * 100;
-        //Debug.DrawRay(transform.position, forward, Color.green);
-
-        /*if (Physics.Raycast(transform.position, forward, 10))
+        if (turnRight)
         {
-            Debug.LogWarning("Green Ray hit.");
-            Quaternion targetRotation = Quaternion.LookRotation((destPos - new Vector3(0,-45,0)) - transform.position);
+            //Debug.LogError("RIGHT");
+            //Quaternion targetRotation = Quaternion.LookRotation(new Vector3(60, 0, 0) + transform.position);
+            Quaternion targetRotation = Quaternion.Euler(60, 0, 0);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * curRotSpeed);
+            turnRight = false;
         }
-
-        Vector3 forwardright = transform.TransformDirection(Vector3.forward + new Vector3(1,0,0)) * 100;
-        //Debug.DrawRay(transform.position, forwardright, Color.green);
-        if (Physics.Raycast(transform.position, forwardright, 10))
-        {
-            Debug.LogWarning("Blue Ray hit.");
-            Quaternion targetRotation = Quaternion.LookRotation((destPos - new Vector3(0, -45, 0)) - transform.position);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * curRotSpeed);
-        }
-
-        Vector3 forwardleft = transform.TransformDirection(Vector3.forward + new Vector3(-1, 0, 0)) * 100;
-        //Debug.DrawRay(transform.position, forwardleft, Color.green);
-        if (Physics.Raycast(transform.position, forwardright, 10))
-        {
-            Debug.LogWarning("Red Ray hit.");
-            Quaternion targetRotation = Quaternion.LookRotation((destPos - new Vector3(0, 45, 0)) - transform.position);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * curRotSpeed);
-        }*/
-
+        
         //Check distance with other tanks, when none near enough do nothing, if one within a short range; evade
         /*for (int i = 0; i < enemiesTransform.Length; i++)
         {
