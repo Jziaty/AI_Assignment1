@@ -86,16 +86,16 @@ public class SimpleFSM : FSM
         }
 
 
-        GameObject[] Bots = GameObject.FindGameObjectsWithTag("Enemy");
+        //SGameObject[] Bots = GameObject.FindGameObjectsWithTag("Enemy");
 
         Vector3 forward = transform.TransformDirection(Vector3.forward) * 100;
         Vector3 forwardright = transform.TransformDirection(Vector3.forward + new Vector3(1, 0, 0)) * 100;
         Vector3 forwardleft = transform.TransformDirection(Vector3.forward + new Vector3(-1, 0, 0)) * 100;
 
 
-        Debug.DrawRay(transform.position, forward, Color.green);
-        Debug.DrawRay(transform.position, forwardright, Color.blue);
-        Debug.DrawRay(transform.position, forwardleft, Color.red);
+        //Debug.DrawRay(transform.position, forward, Color.green);
+        //Debug.DrawRay(transform.position, forwardright, Color.blue);
+        //Debug.DrawRay(transform.position, forwardleft, Color.red);
         //foreach (GameObject bot in Bots)
         //{
         //float distance = Vector3.Distance(bot.transform.position, transform.position);
@@ -108,46 +108,53 @@ public class SimpleFSM : FSM
         RaycastHit hit2;
         RaycastHit hit3;
 
-        if (Physics.Raycast(transform.position, forward, out hit, 200))
+        if (Physics.Raycast(transform.position, forward, out hit, 500))
         {
             if (hit.distance <= 500)
             {
-                
+                Debug.DrawLine(transform.position, hit.point, Color.yellow);
                 Vector3 hitNormal = hit.normal;
+                //No movement in y space (up or down)
+                //hitNormal.y = 0.0f;
+                //Get the new directional vector by adding force to agent's current forward vector
+                //targetPoint = transform.forward + hitNormal * force;
+
+                Quaternion targetRotation = Quaternion.LookRotation(new Vector3(30,0,30) + hit.transform.position);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * curRotSpeed);
+                
+            }
+        }
+
+        if (Physics.Raycast(transform.position, forwardright, out hit2, 200))
+        {
+            if (hit2.distance <= 500)
+            {
+                Debug.DrawLine(transform.position, hit2.point, Color.blue);
+                Vector3 hitNormal = hit2.normal;
                 //No movement in y space (up or down)
                 hitNormal.y = 0.0f;
                 //Get the new directional vector by adding force to agent's current forward vector
                 targetPoint = transform.forward + hitNormal * force;
-                
+
+                Quaternion targetRotation = Quaternion.LookRotation(targetPoint - hit2.transform.position);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * curRotSpeed);
 
             }
         }
 
-        if (Physics.Raycast(transform.position, forwardright, out hit, 200))
+        if (Physics.Raycast(transform.position, forwardleft, out hit3, 200))
         {
-            if (hit.distance <= 500)
+            if (hit3.distance <= 500)
             {
-
-                Vector3 hitNormal = hit.normal;
+                Debug.DrawLine(transform.position, hit3.point, Color.red);
+                Vector3 hitNormal = hit3.normal;
                 //No movement in y space (up or down)
                 hitNormal.y = 0.0f;
                 //Get the new directional vector by adding force to agent's current forward vector
                 targetPoint = transform.forward + hitNormal * force;
 
-
-            }
-        }
-
-        if (Physics.Raycast(transform.position, forwardleft, out hit, 200))
-        {
-            if (hit.distance <= 500)
-            {
-
-                Vector3 hitNormal = hit.normal;
-                //No movement in y space (up or down)
-                hitNormal.y = 0.0f;
-                //Get the new directional vector by adding force to agent's current forward vector
-                targetPoint = transform.forward + hitNormal * force;
+                Quaternion targetRotation = Quaternion.LookRotation(targetPoint - hit3.transform.position);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * curRotSpeed);
 
 
             }
@@ -205,7 +212,7 @@ public class SimpleFSM : FSM
                     }
                 }*/
             }
-
+        
             /// <summary>
             /// Patrol state
             /// </summary>
