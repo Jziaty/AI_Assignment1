@@ -34,7 +34,7 @@ public class SimpleFSM : FSM
     //private float[] Edistance;
 
     //Transform array for the enemy tanks
-    public Transform[] enemiesTransform;
+    //public Transform[] enemiesTransform;
 
     public bool turnRight;
     public bool turnLeft;
@@ -43,8 +43,11 @@ public class SimpleFSM : FSM
 
     private Vector3 targetPoint;
 
+    public Transform HeadlightL;
+    public Transform HeadlightR;
+
     //Initialize the Finite state machine for the NPC tank
-	protected override void Initialize () 
+    protected override void Initialize () 
     {
         curState = FSMState.Patrol;
         curSpeed = 150.0f;
@@ -86,16 +89,19 @@ public class SimpleFSM : FSM
         }
 
 
-        //SGameObject[] Bots = GameObject.FindGameObjectsWithTag("Enemy");
+        //GameObject[] Bots = GameObject.FindGameObjectsWithTag("Enemy");
 
         Vector3 forward = transform.TransformDirection(Vector3.forward) * 100;
         Vector3 forwardright = transform.TransformDirection(Vector3.forward + new Vector3(1, 0, 0)) * 100;
         Vector3 forwardleft = transform.TransformDirection(Vector3.forward + new Vector3(-1, 0, 0)) * 100;
+        Vector3 forwardL = HeadlightL.TransformDirection(Vector3.forward) * 100;
+        Vector3 forwardR = HeadlightR.TransformDirection(Vector3.forward) * 100;
 
 
         //Debug.DrawRay(transform.position, forward, Color.green);
         //Debug.DrawRay(transform.position, forwardright, Color.blue);
         //Debug.DrawRay(transform.position, forwardleft, Color.red);
+
         //foreach (GameObject bot in Bots)
         //{
         //float distance = Vector3.Distance(bot.transform.position, transform.position);
@@ -107,20 +113,28 @@ public class SimpleFSM : FSM
         RaycastHit hit;
         RaycastHit hit2;
         RaycastHit hit3;
+        RaycastHit hit4;
+        RaycastHit hit5;
 
         if (Physics.Raycast(transform.position, forward, out hit, 500))
         {
             if (hit.distance <= 500)
             {
                 Debug.DrawLine(transform.position, hit.point, Color.yellow);
-                Vector3 hitNormal = hit.normal;
+                //Vector3 hitNormal = hit.normal;
                 //No movement in y space (up or down)
                 //hitNormal.y = 0.0f;
                 //Get the new directional vector by adding force to agent's current forward vector
-                //targetPoint = transform.forward + hitNormal * force;
+                targetPoint = hit.transform.position + hit.transform.right * force;
 
-                Quaternion targetRotation = Quaternion.LookRotation(new Vector3(30,0,30) + hit.transform.position);
+                Quaternion targetRotation = Quaternion.LookRotation(new Vector3 (-45,0,0));
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * curRotSpeed);
+
+                /*if (Vector3.Distance(transform.position, hit.transform.position) <= 50f)
+                {
+                    
+                    transform.rotation = Quaternion.Slerp(transform.rotation, new Vector 3, Time.deltaTime * curRotSpeed);
+                }*/
                 
             }
         }
@@ -160,6 +174,50 @@ public class SimpleFSM : FSM
             }
         }
 
+        if (Physics.Raycast(transform.position, forwardL, out hit4, 500))
+        {
+            if (hit4.distance <= 500)
+            {
+                Debug.DrawLine(transform.position, hit4.point, Color.magenta);
+                //Vector3 hitNormal = hit.normal;
+                //No movement in y space (up or down)
+                //hitNormal.y = 0.0f;
+                //Get the new directional vector by adding force to agent's current forward vector
+                targetPoint = hit4.transform.position + hit4.transform.right * force;
+
+                Quaternion targetRotation = Quaternion.LookRotation(new Vector3(45, 0, 0));
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * curRotSpeed);
+
+                /*if (Vector3.Distance(transform.position, hit.transform.position) <= 50f)
+                {
+                    
+                    transform.rotation = Quaternion.Slerp(transform.rotation, new Vector 3, Time.deltaTime * curRotSpeed);
+                }*/
+
+            }
+        }
+        if (Physics.Raycast(transform.position, forwardR, out hit5, 500))
+        {
+            if (hit5.distance <= 500)
+            {
+                Debug.DrawLine(transform.position, hit5.point, Color.green);
+                //Vector3 hitNormal = hit.normal;
+                //No movement in y space (up or down)
+                //hitNormal.y = 0.0f;
+                //Get the new directional vector by adding force to agent's current forward vector
+                targetPoint = hit5.transform.position + hit5.transform.right * force;
+
+                Quaternion targetRotation = Quaternion.LookRotation(new Vector3(-45, 0, 0));
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * curRotSpeed);
+
+                /*if (Vector3.Distance(transform.position, hit.transform.position) <= 50f)
+                {
+                    
+                    transform.rotation = Quaternion.Slerp(transform.rotation, new Vector 3, Time.deltaTime * curRotSpeed);
+                }*/
+
+            }
+        }
 
         /*       //Debug.DrawRay(transform.position, forwardright, Color.green);
        if (Physics.Raycast(transform.position, forwardright, out hit2, 200))
