@@ -111,7 +111,7 @@ public class SimpleFSM : FSM
             if (hit.distance <= 300)
             {
                 Debug.DrawLine(transform.position, hit.transform.position, Color.yellow);
-                trgtRot = Quaternion.LookRotation(hit.transform.position - transform.position).eulerAngles;
+                trgtRot = Quaternion.LookRotation(hit.transform.position + Vector3.right * 100).eulerAngles;
                 turnRight = true;
                 curState = FSMState.Evade;
 
@@ -123,7 +123,7 @@ public class SimpleFSM : FSM
             if (hit2.distance <= 300)
             {
                 Debug.DrawLine(transform.position, hit2.transform.position, Color.blue);
-                trgtRot = Quaternion.LookRotation(hit2.transform.position - transform.position).eulerAngles;
+                trgtRot = Quaternion.LookRotation(hit2.transform.position + Vector3.left).eulerAngles;
                 turnLeft = true;
                 curState = FSMState.Evade;
 
@@ -135,7 +135,7 @@ public class SimpleFSM : FSM
             if (hit3.distance <= 300)
             {
                 Debug.DrawLine(transform.position, hit3.transform.position, Color.green);
-                trgtRot = Quaternion.LookRotation(hit3.transform.position - transform.position).eulerAngles;
+                trgtRot = Quaternion.LookRotation(hit3.transform.position + Vector3.right).eulerAngles;
                 turnRight = true;
                 curState = FSMState.Evade;
             }
@@ -146,7 +146,7 @@ public class SimpleFSM : FSM
             if (hit4.distance <= 300)
             {
                 Debug.DrawLine(transform.position, hit4.transform.position, Color.red);
-                trgtRot = Quaternion.LookRotation(hit4.transform.position - transform.position).eulerAngles;
+                trgtRot = Quaternion.LookRotation(hit4.transform.position + Vector3.left).eulerAngles;
                 turnRight = true;
                 curState = FSMState.Evade;
             }
@@ -156,7 +156,7 @@ public class SimpleFSM : FSM
             if (hit5.distance <= 300)
             {
                 Debug.DrawLine(transform.position, hit5.transform.position, Color.magenta);
-                trgtRot = Quaternion.LookRotation(hit5.transform.position - transform.position).eulerAngles;
+                trgtRot = Quaternion.LookRotation(hit5.transform.position + Vector3.right).eulerAngles;
                 turnLeft = true;
                 curState = FSMState.Evade;
 
