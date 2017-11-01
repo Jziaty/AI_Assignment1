@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2017
+# Visual Studio 2015
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FSM_Tank_Game", "FSM_Tank_Game.csproj", "{FFA3AB4D-94FF-4585-A959-CF1DC51202B4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FSM_Tank_Game.Plugins", "FSM_Tank_Game.Plugins.csproj", "{B67570D7-2339-C238-02B2-5FEDF238FE9E}"
